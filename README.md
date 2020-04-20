@@ -1,4 +1,4 @@
-# RandomWalkVisualization
+# Random Walk Visualization
 
 This programm is for people who want to see a random walk in action.
 
