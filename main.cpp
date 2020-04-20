@@ -8,10 +8,19 @@
 #define SQ_SIZE 8 // square size in pixel has to be the same solution of a common divisor of WIDTH & HEIGHT, has to be > 1
 #define SQUARES WIDTH/SQ_SIZE // amount of squares (cells)
 
+//#define USE_MACROS 1 // uncomment to define the variables below
+
+#ifdef USE_MACROS
 #define MAX_RUNS 50
 #define STEPS 100 // steps each random walk takes
 #define STEP_SPEED_MS 0
+#endif // USE_MACROS
 
+#ifndef USE_MACROS
+int MAX_RUNS;// = 50;
+int STEPS;// = 100; // steps each random walk takes
+int STEP_SPEED_MS;// = 0;
+#endif // USE_MACROS
 
 void initSquares(sf::RectangleShape Cells[SQUARES][SQUARES], int square_size) {
     for(int i = 0; i < SQUARES; i++) {
@@ -64,26 +73,33 @@ void randomWalk(sf::RectangleShape Cells[SQUARES][SQUARES], sf::RenderWindow &wi
     }
 }
 
-void take_screenshot(const sf::RenderWindow& window) {
+void take_screenshot(const sf::RenderWindow& wnd) {
     sf::Texture texture;
-    texture.create(window.getSize().x, window.getSize().y);
-    texture.update(window);
-    if (texture.copyToImage().saveToFile("screen.jpg")) {
+    texture.create(wnd.getSize().x, wnd.getSize().y);
+    texture.update(wnd);
+    if (texture.copyToImage().saveToFile("screen.jpg"))
         std::cout << "Screenshot saved" << std::endl;
-    } else {
+    else
         std::cout << "Error taking screenshot..." << std::endl;
-    }
 }
 
 
 int main() {
-    sf::RenderWindow wind(sf::VideoMode(WIDTH, HEIGHT), "Random Walk by Davis R.", sf::Style::Titlebar | sf::Style::Close | sf::Style::Resize);
+    sf::RenderWindow wind(sf::VideoMode(WIDTH, HEIGHT), "Random Walk Visualization by Davis R.", sf::Style::Titlebar | sf::Style::Close | sf::Style::Resize);
     sf::Event evnt;
     srand (time(NULL));
 
     wind.setSize(sf::Vector2u(WIDTH, HEIGHT)); // Resizing window with smaller Resolution to increase fps
 
+#ifndef USE_MACROS
     std::cout << "Random Walk by Davis R.\n" << std::endl;
+    std::cout << "Please type the max number of runs (f.e. 50): ";
+    std::cin >> MAX_RUNS;
+    std::cout << "Please type the max number of steps each run takes (f.e. 100): ";
+    std::cin >> STEPS;
+    std::cout << "Please type the step speed in ms (usually 0): ";
+    std::cin >> STEP_SPEED_MS;
+#endif // USE_MACROS
 
     auto Cells = new sf::RectangleShape[SQUARES][SQUARES]; // WIDTH/SQ_SIZE = SQUARES (32)
 
@@ -108,8 +124,6 @@ int main() {
                 }
             }
         } /// Main loop
-
-
 
         if(Nr_Tries < MAX_RUNS) {
             randomWalk(Cells, wind);
