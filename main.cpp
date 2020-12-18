@@ -22,8 +22,9 @@ int STEPS;// = 100; // steps each random walk takes
 int STEP_SPEED_MS;// = 0;
 #endif // USE_MACROS
 
+// Initializes all squares with given size, white color, thickness of 1 and outline color black
 void initSquares(sf::RectangleShape Cells[SQUARES][SQUARES], int square_size) {
-    for(int i = 0; i < SQUARES; i++) {
+    for(int i = 0; i < SQUARES; i++) { // loop through all Squares in 2D-matrix
         for(int j = 0; j < SQUARES; j++) {
             Cells[i][j].setSize(sf::Vector2f(square_size, square_size));
             Cells[i][j].setFillColor(sf::Color::White); // Grey
@@ -33,6 +34,7 @@ void initSquares(sf::RectangleShape Cells[SQUARES][SQUARES], int square_size) {
     }
 }
 
+// Set Position of every element in matrix
 void setPos(sf::RectangleShape Cells[SQUARES][SQUARES], int square_size) {
     for(int i = 0; i < SQUARES; i++) { // Set Position
         for(int j = 0; j < SQUARES; j++) {
@@ -41,6 +43,11 @@ void setPos(sf::RectangleShape Cells[SQUARES][SQUARES], int square_size) {
     }
 }
 
+// Performs random walk through matrix with start point being the middle point x_size/2 & y_size/2
+// Checks for border collision
+// Changes color for every random walk
+// Steps tells how many steps a random walk should take
+// Draws cells on its own
 void randomWalk(sf::RectangleShape Cells[SQUARES][SQUARES], sf::RenderWindow &wind) {
     int start_index_x = SQUARES/2;
     int start_index_y = SQUARES/2;
@@ -49,8 +56,9 @@ void randomWalk(sf::RectangleShape Cells[SQUARES][SQUARES], sf::RenderWindow &wi
     int G = rand()%256;
     int B = rand()%256;
     for(int i = 0; i < STEPS; i++) {
-        int n = rand()%4;
+        int n = rand()%4; // random direction generation
         if((start_index_x > 0 && start_index_x < SQUARES) && (start_index_y > 0 && start_index_y < SQUARES)) {
+            // Check for direction and use randomly generated color for current random walk
             if(dir[n] == "Up")
                 Cells[start_index_x][start_index_y--].setFillColor(sf::Color(R,G,B));
             else if(dir[n] == "Down")
@@ -67,17 +75,18 @@ void randomWalk(sf::RectangleShape Cells[SQUARES][SQUARES], sf::RenderWindow &wi
                     wind.draw(Cells[i][j]);
                 }
             }
-            wind.display();
-            sf::sleep(sf::milliseconds(STEP_SPEED_MS));
+            wind.display(); // start displaying the window
+            sf::sleep(sf::milliseconds(STEP_SPEED_MS)); // sleep for given delay
         }
     }
 }
 
+// Take a screenshot using predefined key in main
 void take_screenshot(const sf::RenderWindow& wnd) {
     sf::Texture texture;
     texture.create(wnd.getSize().x, wnd.getSize().y);
     texture.update(wnd);
-    if (texture.copyToImage().saveToFile("screen.jpg"))
+    if (texture.copyToImage().saveToFile("screen.jpg")) // saving to file
         std::cout << "Screenshot saved" << std::endl;
     else
         std::cout << "Error taking screenshot..." << std::endl;
@@ -91,7 +100,8 @@ int main() {
 
     wind.setSize(sf::Vector2u(WIDTH, HEIGHT)); // Resizing window with smaller Resolution to increase fps
 
-#ifndef USE_MACROS
+    // Print info
+#ifndef USE_MACROS 
     std::cout << "Random Walk by Davis R.\n" << std::endl;
     std::cout << "Please type the max number of runs (f.e. 50): ";
     std::cin >> MAX_RUNS;
@@ -110,10 +120,10 @@ int main() {
 
     int Nr_Tries = 0; // Random Walk counter
 
-    while(wind.isOpen()) {
+    while(wind.isOpen()) { // window loop
         while(wind.pollEvent(evnt)) {
             switch (evnt.type) {
-            case sf::Event::Closed:
+            case sf::Event::Closed: // ESC
                 wind.close();
                 break;
             case sf::Event::TextEntered:
@@ -124,7 +134,8 @@ int main() {
                 }
             }
         } /// Main loop
-
+        
+        // Perform random walk for MAX_RUNS
         if(Nr_Tries < MAX_RUNS) {
             randomWalk(Cells, wind);
             Nr_Tries++;
@@ -142,7 +153,9 @@ int main() {
         }
         wind.display();
     }
-    for(int i = 0; i < WIDTH; i++)
+    
+    // Free up memory
+    for(int i = 0; i < WIDTH; i++) 
         delete [] Cells[i];
     delete [] Cells;
     return 0;
