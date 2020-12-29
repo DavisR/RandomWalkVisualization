@@ -133,8 +133,9 @@ int main() {
                     break;
                 }
             }
-        } /// Main loop
+        } 
         
+        // Main loop //
         // Perform random walk for MAX_RUNS
         if(Nr_Tries < MAX_RUNS) {
             randomWalk(Cells, wind);
